@@ -190,4 +190,4 @@ cython_debug/
 *.m~
 *.sublime*
 .DS_Store
-*/code/RDcreditOutput/*
+*code/RDcreditOutput/*
