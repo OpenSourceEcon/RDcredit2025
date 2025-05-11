@@ -1,0 +1,31 @@
+name: rdcredit-dev
+channels:
+- conda-forge
+dependencies:
+- python>=3.12, <3.13
+- numpy
+- numba>=0.54
+- scipy>=1.7.1
+- pandas>=1.2.5
+- matplotlib
+- plotly
+- bokeh
+- dask>=2.30.0
+- dask-core>=2.30.0
+- distributed>=2.30.1
+- marshmallow<4.0.0
+- paramtools>=0.15.0
+- requests
+- xlwt
+- statsmodels
+- linearmodels
+- jupyter
+- ipykernel
+- ipython
+- pip
+- pip:
+  - openpyxl>=3.1.2
+  - pandas-datareader
+  - ogcore==0.14.3
+  - ogusa==0.2.2
+  - cost-of-capital-calculator
