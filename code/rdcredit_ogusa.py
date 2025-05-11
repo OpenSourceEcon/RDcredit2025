@@ -18,6 +18,10 @@ from ogcore import output_tables as ot
 from ogcore import output_plots as op
 from ogcore.execute import runner
 from ogcore.utils import safe_read_pickle
+from ogcore.constants import (
+    VAR_LABELS,
+    ToGDP_LABELS,
+)
 
 # Use a custom matplotlib style file for plots
 style_file_url = (
@@ -204,40 +208,116 @@ def main():
     )
 
     # Create plots for document: macro aggregates
-    op.plot_aggregates(
-        base_tpi,
-        base_params,
-        reform_tpi,
-        reform_params,
-        var_list=["Y", "K", "L"],
-        num_years_to_plot=20,
-        start_year=base_params.start_year,
-        path=os.path.join(figdoc_dir, "fig1_macro.png"),
+    plot_title1 = (
+        "Figure 1. Percent change in macroeconomic variables from Section " +
+        "174 reform allowing full R&D expensing deductibility: 2026-2045"
     )
+    var_list1=["Y", "K", "L"]
+    start_year=base_params.start_year
+    num_years_to_plot=20
+    year_vec = np.arange(
+        start_year, start_year + num_years_to_plot
+    ).astype(int)
+    start_index = start_year - base_params.start_year
+    fig1, ax1 = plt.subplots()
+    for i, v in enumerate(var_list1):
+        plot_var = (reform_tpi[v] - base_tpi[v]) / base_tpi[v]
+        plt.plot(
+            year_vec,
+            plot_var[start_index : start_index + num_years_to_plot],
+            label=VAR_LABELS[v],
+        )
+    plt.xlabel(r"Year $t$")
+    plt.ylabel( r"Pct. change")
+    # plt.title(plot_title1, fontsize=15)
+    ax1.set_yticks(ax1.get_yticks().tolist())
+    vals = ax1.get_yticks()
+    ax1.set_yticklabels(["{:,.2%}".format(x) for x in vals])
+    plt.xlim(
+        (base_params.start_year-1, base_params.start_year + num_years_to_plot)
+    )
+    plt.xticks([2026, 2028, 2030, 2032, 2034, 2036, 2038, 2040, 2042, 2044])
+    plt.legend(loc=9, bbox_to_anchor=(0.5, -0.15), ncol=2)
+    fig1_path = os.path.join(figdoc_dir, "fig1_macro.png")
+    plt.savefig(fig1_path, bbox_inches="tight", dpi=300)
+    plt.close()
 
     # Create plots for document: fiscal variables
-    op.plot_aggregates(
-        base_tpi,
-        base_params,
-        reform_tpi,
-        reform_params,
-        var_list=["D", "Rev"],
-        num_years_to_plot=20,
-        start_year=base_params.start_year,
-        path=os.path.join(figdoc_dir, "fig2_fiscal.png"),
+    plot_title2 = (
+        "Figure 2. Percent change in fiscal variables from Section " +
+        "174 reform allowing full R&D expensing deductibility: 2026-2045"
     )
+    var_list2=["D", "total_tax_revenue"]
+    start_year=base_params.start_year
+    num_years_to_plot=20
+    year_vec = np.arange(
+        start_year, start_year + num_years_to_plot
+    ).astype(int)
+    start_index = start_year - base_params.start_year
+    fig2, ax2 = plt.subplots()
+    for i, v in enumerate(var_list2):
+        plot_var = (reform_tpi[v] - base_tpi[v]) / base_tpi[v]
+        plt.plot(
+            year_vec,
+            plot_var[start_index : start_index + num_years_to_plot],
+            label=VAR_LABELS[v],
+        )
+    plt.xlabel(r"Year $t$")
+    plt.ylabel( r"Pct. change")
+    # plt.title(plot_title2, fontsize=15)
+    ax2.set_yticks(ax2.get_yticks().tolist())
+    vals = ax2.get_yticks()
+    ax2.set_yticklabels(["{:,.2%}".format(x) for x in vals])
+    plt.xlim(
+        (base_params.start_year-1, base_params.start_year + num_years_to_plot)
+    )
+    plt.xticks([2026, 2028, 2030, 2032, 2034, 2036, 2038, 2040, 2042, 2044])
+    plt.legend(loc=9, bbox_to_anchor=(0.5, -0.15), ncol=2)
+    fig2_path = os.path.join(figdoc_dir, "fig2_fiscal.png")
+    plt.savefig(fig2_path, bbox_inches="tight", dpi=300)
+    plt.close()
 
     # Create plots for document: fiscal variables
-    op.plot_gdp_ratio(
-        base_tpi,
-        base_params,
-        reform_tpi,
-        reform_params,
-        var_list=["D"],
-        num_years_to_plot=20,
-        start_year=base_params.start_year,
-        path=os.path.join(figdoc_dir, "fig3_debt_gdp.png"),
+    plot_title3 = (
+        "Change in government debt-to-GDP from Section 174 reform allowing " +
+        "full R&D expensing deductibility: 2026-2045"
     )
+    start_year=base_params.start_year
+    num_years_to_plot=20
+    year_vec = np.arange(
+        start_year, start_year + num_years_to_plot
+    ).astype(int)
+    start_index = start_year - base_params.start_year
+    fig3, ax3 = plt.subplots()
+    plot_var_base = (
+        base_tpi["D"][: base_params.T] / base_tpi["Y"][: base_params.T]
+    )
+    plot_var_reform = (
+        reform_tpi["D"][: base_params.T] / reform_tpi["Y"][: base_params.T]
+    )
+    plt.plot(
+        year_vec, plot_var_base[start_index: start_index + num_years_to_plot],
+        label="Baseline " + ToGDP_LABELS["D"],
+    )
+    plt.plot(
+        year_vec,
+        plot_var_reform[start_index: start_index + num_years_to_plot],
+        label="Reform " + ToGDP_LABELS["D"],
+    )
+    plt.xlabel(r"Year $t$")
+    plt.ylabel( r"Percent of GDP")
+    # plt.title(plot_title3, fontsize=15)
+    ax3.set_yticks(ax3.get_yticks().tolist())
+    vals = ax3.get_yticks()
+    ax3.set_yticklabels(["{:,.0%}".format(x) for x in vals])
+    plt.xlim(
+        (base_params.start_year-1, base_params.start_year + num_years_to_plot)
+    )
+    plt.xticks([2026, 2028, 2030, 2032, 2034, 2036, 2038, 2040, 2042, 2044])
+    plt.legend(loc=9, bbox_to_anchor=(0.5, -0.15), ncol=2)
+    fig3_path = os.path.join(figdoc_dir, "fig3_debt_gdp.png")
+    plt.savefig(fig3_path, bbox_inches="tight", dpi=300)
+    plt.close()
 
     # Create plots for document: individual savings
     op.ability_bar(
