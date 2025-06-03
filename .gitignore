@@ -191,7 +191,9 @@ cython_debug/
 *.sublime*
 .DS_Store
 *code/RDcreditOutput/*/micro_data_baseline.pkl
+*code/RDcreditOutput/*/micro_data_policy.pkl
 *code/RDcreditOutput/*/model_params.pkl
 *code/RDcreditOutput/*/TxFuncEst_baseline.pkl
+*code/RDcreditOutput/*/TxFuncEst_policy.pkl
 *code/RDcreditOutput/OUTPUT_BASELINE/OUTPUT/*
 *code/RDcreditOutput/*/tables_figures/*
