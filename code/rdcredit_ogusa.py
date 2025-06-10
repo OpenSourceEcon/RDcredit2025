@@ -62,169 +62,169 @@ def main():
     Run baseline policy
     ---------------------------------------------------------------------------
     """
-    # Set up baseline parameterization
-    p = Specifications(
-        baseline=True,
-        num_workers=num_workers,
-        baseline_dir=base_dir,
-        output_base=base_dir,
-    )
-    # Update parameters for baseline from default json file
-    with importlib.resources.open_text(
-        "ogusa", "ogusa_default_parameters.json"
-    ) as file:
-        defaults = json.load(file)
-    p.update_specifications(defaults)
-    p.tax_func_type = "HSV"
-    p.age_specific = True
+    # # Set up baseline parameterization
+    # p = Specifications(
+    #     baseline=True,
+    #     num_workers=num_workers,
+    #     baseline_dir=base_dir,
+    #     output_base=base_dir,
+    # )
+    # # Update parameters for baseline from default json file
+    # with importlib.resources.open_text(
+    #     "ogusa", "ogusa_default_parameters.json"
+    # ) as file:
+    #     defaults = json.load(file)
+    # p.update_specifications(defaults)
+    # p.tax_func_type = "HSV"
+    # p.age_specific = True
 
-    # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
-    # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
-    tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
-    c = Calibration(
-        p,
-        estimate_tax_functions=True,
-        client=client,
-        data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
-        weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
-        gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
-        records_start_year=2021,
-    )
-    client.close()
-    d = c.get_dict()
-    # # additional parameters to change
-    updated_params = {
-        "start_year": 2026,
-        "RC_TPI": 100*1e-4,
-        "inv_tax_credit": [[0.015]],
-        "etr_params": d["etr_params"],
-        "mtrx_params": d["mtrx_params"],
-        "mtry_params": d["mtry_params"],
-        "mean_income_data": d["mean_income_data"],
-        "frac_tax_payroll": d["frac_tax_payroll"],
-    }
-    p.update_specifications(updated_params)
+    # # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
+    # # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
+    # tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
+    # c = Calibration(
+    #     p,
+    #     estimate_tax_functions=True,
+    #     client=client,
+    #     data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
+    #     weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
+    #     gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
+    #     records_start_year=2021,
+    # )
+    # client.close()
+    # d = c.get_dict()
+    # # # additional parameters to change
+    # updated_params = {
+    #     "start_year": 2026,
+    #     "RC_TPI": 100*1e-4,
+    #     "inv_tax_credit": [[0.015]],
+    #     "etr_params": d["etr_params"],
+    #     "mtrx_params": d["mtrx_params"],
+    #     "mtry_params": d["mtry_params"],
+    #     "mean_income_data": d["mean_income_data"],
+    #     "frac_tax_payroll": d["frac_tax_payroll"],
+    # }
+    # p.update_specifications(updated_params)
 
-    # Run model
-    start_time = time.time()
-    client = Client(n_workers=num_workers, threads_per_worker=1)
-    runner(p, time_path=True, client=client)
-    print("run time = ", time.time() - start_time)
-    client.close()
+    # # Run model
+    # start_time = time.time()
+    # client = Client(n_workers=num_workers, threads_per_worker=1)
+    # runner(p, time_path=True, client=client)
+    # print("run time = ", time.time() - start_time)
+    # client.close()
 
     """
     ---------------------------------------------------------------------------
     Run reform policy with retroactivity
     ---------------------------------------------------------------------------
     """
-    client = Client(n_workers=num_workers, threads_per_worker=1)
-    # Set up baseline parameterization
-    p2 = Specifications(
-        baseline=False,
-        num_workers=num_workers,
-        baseline_dir=base_dir,
-        output_base=reform_retro_dir,
-    )
-    # Update parameters for baseline from default json file
-    with importlib.resources.open_text(
-        "ogusa", "ogusa_default_parameters.json"
-    ) as file:
-        defaults = json.load(file)
-    p2.update_specifications(defaults)
-    p2.tax_func_type = "HSV"
-    p2.age_specific = True
+    # client = Client(n_workers=num_workers, threads_per_worker=1)
+    # # Set up baseline parameterization
+    # p2 = Specifications(
+    #     baseline=False,
+    #     num_workers=num_workers,
+    #     baseline_dir=base_dir,
+    #     output_base=reform_retro_dir,
+    # )
+    # # Update parameters for baseline from default json file
+    # with importlib.resources.open_text(
+    #     "ogusa", "ogusa_default_parameters.json"
+    # ) as file:
+    #     defaults = json.load(file)
+    # p2.update_specifications(defaults)
+    # p2.tax_func_type = "HSV"
+    # p2.age_specific = True
 
-    # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
-    # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
-    tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
-    c2 = Calibration(
-        p2,
-        estimate_tax_functions=True,
-        client=client,
-        data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
-        weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
-        gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
-        records_start_year=2021,
-    )
-    client.close()
-    d2 = c2.get_dict()
-    # # additional parameters to change
-    updated_params2 = {
-        "start_year": 2026,
-        "RC_TPI": 100*1e-4,
-        "baseline_spending": True,
-        "inv_tax_credit": [[0.03333], [0.02295]],
-        "etr_params": d2["etr_params"],
-        "mtrx_params": d2["mtrx_params"],
-        "mtry_params": d2["mtry_params"],
-        "mean_income_data": d2["mean_income_data"],
-        "frac_tax_payroll": d2["frac_tax_payroll"],
-    }
-    p2.update_specifications(updated_params2)
+    # # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
+    # # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
+    # tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
+    # c2 = Calibration(
+    #     p2,
+    #     estimate_tax_functions=True,
+    #     client=client,
+    #     data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
+    #     weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
+    #     gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
+    #     records_start_year=2021,
+    # )
+    # client.close()
+    # d2 = c2.get_dict()
+    # # # additional parameters to change
+    # updated_params2 = {
+    #     "start_year": 2026,
+    #     "RC_TPI": 100*1e-4,
+    #     "baseline_spending": True,
+    #     "inv_tax_credit": [[0.03333], [0.02295]],
+    #     "etr_params": d2["etr_params"],
+    #     "mtrx_params": d2["mtrx_params"],
+    #     "mtry_params": d2["mtry_params"],
+    #     "mean_income_data": d2["mean_income_data"],
+    #     "frac_tax_payroll": d2["frac_tax_payroll"],
+    # }
+    # p2.update_specifications(updated_params2)
 
-    # Run model
-    start_time = time.time()
-    client = Client(n_workers=num_workers, threads_per_worker=1)
-    runner(p2, time_path=True, client=client)
-    print("run time = ", time.time() - start_time)
-    client.close()
+    # # Run model
+    # start_time = time.time()
+    # client = Client(n_workers=num_workers, threads_per_worker=1)
+    # runner(p2, time_path=True, client=client)
+    # print("run time = ", time.time() - start_time)
+    # client.close()
 
     """
     ---------------------------------------------------------------------------
     Run reform policy with no retroactivity
     ---------------------------------------------------------------------------
     """
-    client = Client(n_workers=num_workers, threads_per_worker=1)
-    # Set up baseline parameterization
-    p3 = Specifications(
-        baseline=False,
-        num_workers=num_workers,
-        baseline_dir=base_dir,
-        output_base=reform_noretro_dir,
-    )
-    # Update parameters for baseline from default json file
-    with importlib.resources.open_text(
-        "ogusa", "ogusa_default_parameters.json"
-    ) as file:
-        defaults = json.load(file)
-    p3.update_specifications(defaults)
-    p3.tax_func_type = "HSV"
-    p3.age_specific = True
+    # client = Client(n_workers=num_workers, threads_per_worker=1)
+    # # Set up baseline parameterization
+    # p3 = Specifications(
+    #     baseline=False,
+    #     num_workers=num_workers,
+    #     baseline_dir=base_dir,
+    #     output_base=reform_noretro_dir,
+    # )
+    # # Update parameters for baseline from default json file
+    # with importlib.resources.open_text(
+    #     "ogusa", "ogusa_default_parameters.json"
+    # ) as file:
+    #     defaults = json.load(file)
+    # p3.update_specifications(defaults)
+    # p3.tax_func_type = "HSV"
+    # p3.age_specific = True
 
-    # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
-    # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
-    tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
-    c3 = Calibration(
-        p3,
-        estimate_tax_functions=True,
-        client=client,
-        data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
-        weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
-        gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
-        records_start_year=2021,
-    )
-    client.close()
-    d3 = c3.get_dict()
-    # # additional parameters to change
-    updated_params3 = {
-        "start_year": 2026,
-        "RC_TPI": 100*1e-4,
-        "baseline_spending": True,
-        "inv_tax_credit": [[0.02295]],
-        "etr_params": d3["etr_params"],
-        "mtrx_params": d3["mtrx_params"],
-        "mtry_params": d3["mtry_params"],
-        "mean_income_data": d3["mean_income_data"],
-        "frac_tax_payroll": d3["frac_tax_payroll"],
-    }
-    p3.update_specifications(updated_params3)
+    # # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
+    # # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
+    # tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
+    # c3 = Calibration(
+    #     p3,
+    #     estimate_tax_functions=True,
+    #     client=client,
+    #     data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
+    #     weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
+    #     gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
+    #     records_start_year=2021,
+    # )
+    # client.close()
+    # d3 = c3.get_dict()
+    # # # additional parameters to change
+    # updated_params3 = {
+    #     "start_year": 2026,
+    #     "RC_TPI": 100*1e-4,
+    #     "baseline_spending": True,
+    #     "inv_tax_credit": [[0.02295]],
+    #     "etr_params": d3["etr_params"],
+    #     "mtrx_params": d3["mtrx_params"],
+    #     "mtry_params": d3["mtry_params"],
+    #     "mean_income_data": d3["mean_income_data"],
+    #     "frac_tax_payroll": d3["frac_tax_payroll"],
+    # }
+    # p3.update_specifications(updated_params3)
 
-    # Run model
-    start_time = time.time()
-    client = Client(n_workers=num_workers, threads_per_worker=1)
-    runner(p3, time_path=True, client=client)
-    print("run time = ", time.time() - start_time)
-    client.close()
+    # # Run model
+    # start_time = time.time()
+    # client = Client(n_workers=num_workers, threads_per_worker=1)
+    # runner(p3, time_path=True, client=client)
+    # print("run time = ", time.time() - start_time)
+    # client.close()
 
     """
     ---------------------------------------------------------------------------
@@ -338,7 +338,7 @@ def main():
             ),
             color=color_list1[i],
             linestyle="-",
-            label=VAR_LABELS[v] + ", retro"
+            label=VAR_LABELS[v] + ", backdate"
         )
         plt.plot(
             year_vec,
@@ -352,7 +352,7 @@ def main():
             ),
             color=color_list1[i],
             linestyle="--",
-            label=VAR_LABELS[v] + ", no retro"
+            label=VAR_LABELS[v] + ", no backdate"
         )
     plt.xlabel(r"Year $t$")
     plt.ylabel( r"Pct. change")
@@ -403,7 +403,7 @@ def main():
             ),
             color=color_list2[i],
             linestyle="-",
-            label=VAR_LABELS[v] + ", retro"
+            label=VAR_LABELS[v] + ", backdate"
         )
         plt.plot(
             year_vec,
@@ -417,7 +417,7 @@ def main():
             ),
             color=color_list2[i],
             linestyle="--",
-            label=VAR_LABELS[v] + ", no retro"
+            label=VAR_LABELS[v] + ", no backdate"
         )
     plt.xlabel(r"Year $t$")
     plt.ylabel( r"Pct. change")
@@ -470,13 +470,13 @@ def main():
         year_vec,
         plot_var_reform_retro[start_index: start_index + num_years_to_plot],
         color="red", linestyle="-",
-        label="Reform " + ToGDP_LABELS["D"] + ", retro"
+        label="Reform " + ToGDP_LABELS["D"] + ", backdate"
     )
     plt.plot(
         year_vec,
         plot_var_reform_noretro[start_index: start_index + num_years_to_plot],
         color="red", linestyle="--",
-        label="Reform " + ToGDP_LABELS["D"] + ", no retro"
+        label="Reform " + ToGDP_LABELS["D"] + ", no backdate"
     )
     plt.xlabel(r"Year $t$")
     plt.ylabel( r"Percent of GDP")
