@@ -117,57 +117,57 @@ def main():
     Run reform policy with retroactivity
     ---------------------------------------------------------------------------
     """
-    # client = Client(n_workers=num_workers, threads_per_worker=1)
-    # # Set up baseline parameterization
-    # p2 = Specifications(
-    #     baseline=False,
-    #     num_workers=num_workers,
-    #     baseline_dir=base_dir,
-    #     output_base=reform_retro_dir,
-    # )
-    # # Update parameters for baseline from default json file
-    # with importlib.resources.open_text(
-    #     "ogusa", "ogusa_default_parameters.json"
-    # ) as file:
-    #     defaults = json.load(file)
-    # p2.update_specifications(defaults)
-    # p2.tax_func_type = "HSV"
-    # p2.age_specific = True
+    client = Client(n_workers=num_workers, threads_per_worker=1)
+    # Set up baseline parameterization
+    p2 = Specifications(
+        baseline=False,
+        num_workers=num_workers,
+        baseline_dir=base_dir,
+        output_base=reform_retro_dir,
+    )
+    # Update parameters for baseline from default json file
+    with importlib.resources.open_text(
+        "ogusa", "ogusa_default_parameters.json"
+    ) as file:
+        defaults = json.load(file)
+    p2.update_specifications(defaults)
+    p2.tax_func_type = "HSV"
+    p2.age_specific = True
 
-    # # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
-    # # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
-    # tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
-    # c2 = Calibration(
-    #     p2,
-    #     estimate_tax_functions=True,
-    #     client=client,
-    #     data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
-    #     weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
-    #     gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
-    #     records_start_year=2021,
-    # )
-    # client.close()
-    # d2 = c2.get_dict()
-    # # # additional parameters to change
-    # updated_params2 = {
-    #     "start_year": 2026,
-    #     "RC_TPI": 100*1e-4,
-    #     "baseline_spending": True,
-    #     "inv_tax_credit": [[0.03333], [0.02295]],
-    #     "etr_params": d2["etr_params"],
-    #     "mtrx_params": d2["mtrx_params"],
-    #     "mtry_params": d2["mtry_params"],
-    #     "mean_income_data": d2["mean_income_data"],
-    #     "frac_tax_payroll": d2["frac_tax_payroll"],
-    # }
-    # p2.update_specifications(updated_params2)
+    # c = Calibration(p, estimate_tax_functions=True, iit_baseline=iit_baseline, data='tmd', client=client)
+    # c = Calibration(p, estimate_tax_functions=True, data='tmd', client=client)
+    tmd_dir = "/Users/richardevans/Docs/Economics/OSE/microsim/tax-microdata-benchmarking/tmd/storage/output"
+    c2 = Calibration(
+        p2,
+        estimate_tax_functions=True,
+        client=client,
+        data=Path(os.path.join(tmd_dir, "tmd_jason2.csv.gz")),
+        weights=Path(os.path.join(tmd_dir, "tmd_weights_jason2.csv.gz")),
+        gfactors=Path(os.path.join(tmd_dir, "tmd_growfactors_jason2.csv")),
+        records_start_year=2021,
+    )
+    client.close()
+    d2 = c2.get_dict()
+    # # additional parameters to change
+    updated_params2 = {
+        "start_year": 2026,
+        "RC_TPI": 100*1e-4,
+        "baseline_spending": True,
+        "inv_tax_credit": [[0.02692], [0.02295]],
+        "etr_params": d2["etr_params"],
+        "mtrx_params": d2["mtrx_params"],
+        "mtry_params": d2["mtry_params"],
+        "mean_income_data": d2["mean_income_data"],
+        "frac_tax_payroll": d2["frac_tax_payroll"],
+    }
+    p2.update_specifications(updated_params2)
 
-    # # Run model
-    # start_time = time.time()
-    # client = Client(n_workers=num_workers, threads_per_worker=1)
-    # runner(p2, time_path=True, client=client)
-    # print("run time = ", time.time() - start_time)
-    # client.close()
+    # Run model
+    start_time = time.time()
+    client = Client(n_workers=num_workers, threads_per_worker=1)
+    runner(p2, time_path=True, client=client)
+    print("run time = ", time.time() - start_time)
+    client.close()
 
     """
     ---------------------------------------------------------------------------
