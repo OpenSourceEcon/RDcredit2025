@@ -117,7 +117,7 @@ def main():
     Run reform policy with retroactivity
     ---------------------------------------------------------------------------
     """
-    client = Client(n_workers=num_workers, threads_per_worker=1)
+    # client = Client(n_workers=num_workers, threads_per_worker=1)
     # Set up baseline parameterization
     p2 = Specifications(
         baseline=False,
